@@ -1,0 +1,33 @@
+services:
+  php:
+    build: ./docker/php
+    container_name: swapi-php
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+
+  nginx:
+    build: ./docker/nginx
+    container_name: swapi-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - php
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    container_name: swapi-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8080/api
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
