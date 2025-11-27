@@ -1,0 +1,255 @@
+:root {
+  font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #333;
+  background-color: #ededed;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ededed;
+}
+
+.header {
+  background: #ffffff;
+  text-align: center;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.header h1 {
+  margin: 0;
+  color: #0ab463;
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+}
+
+.content {
+  flex: 1;
+  width: min(1180px, 100%);
+  margin: 2.5rem auto 3rem;
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) 1fr;
+  gap: 1.75rem;
+  padding: 0 1.5rem;
+}
+
+.searchCard,
+.resultsCard {
+  background: #fefefe;
+  border-radius: 18px;
+  border: 1px solid #dedede;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
+  padding: 1.75rem;
+}
+
+.searchCard {
+  align-self: start;
+}
+
+.label {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.toggleGroup {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: #4a4e57;
+  cursor: pointer;
+}
+
+.toggle input {
+  accent-color: #1789d4;
+  transform: scale(1.05);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputWrapper {
+  width: 100%;
+}
+
+.inputWrapper input {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid #cfd3da;
+  background: #fff;
+  font-size: 0.95rem;
+  padding: 0.65rem 0.75rem;
+  color: #4a4e57;
+  box-sizing: border-box;
+}
+
+.inputWrapper input::placeholder {
+  color: #b3b3b3;
+}
+
+.searchButton {
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 0.8rem 0;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.searchButton:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.searchButtonEnabled {
+  background: #0ab463;
+  color: #fefefe;
+}
+
+.searchButtonDisabled {
+  background: #c4c4c4;
+  color: #fefefe;
+  cursor: not-allowed;
+}
+
+.resultsCard {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.resultsHeader {
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.resultsHeader h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.resultsBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.resultsMessage {
+  text-align: center;
+  color: #8c8f98;
+  font-weight: 600;
+  line-height: 1.6;
+  margin: auto;
+}
+
+.resultsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.resultsList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #e4e7ec;
+  font-weight: 600;
+  color: #21242a;
+}
+
+.resultsList li:last-child {
+  border-bottom: none;
+}
+
+.detailButton,
+.detailButtonDisabled {
+  border-radius: 999px;
+  padding: 0.4rem 1.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  color: #ffffff;
+  background: #0ab463;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detailButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(10, 180, 99, 0.3);
+}
+
+.detailButtonDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.visuallyHidden {
+  position: absolute;
+  inset: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+/* Responsiveness */
+@media (max-width: 960px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .resultsCard {
+    order: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding: 0 1rem;
+  }
+
+  .searchCard,
+  .resultsCard {
+    padding: 1.5rem;
+  }
+
+  .toggleGroup {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .resultsList li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .detailButton {
+    align-self: flex-start;
+  }
+}

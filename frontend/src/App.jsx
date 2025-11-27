@@ -1,26 +1,12 @@
-import { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import PersonDetail from './pages/PersonDetail';
 
 export default function App() {
-  const [people, setPeople] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/swapi/people')
-      .then((res) => res.json())
-      .then((data) => setPeople(data.results || []))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
-
   return (
-    <main>
-      <h1>Star Wars Characters</h1>
-      <ul>
-        {people.map((person) => (
-          <li key={person.uid}>{person.name}</li>
-        ))}
-      </ul>
-    </main>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/people/:id" element={<PersonDetail />} />
+    </Routes>
   );
 }
