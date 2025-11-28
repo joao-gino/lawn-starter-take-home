@@ -45,7 +45,7 @@ function loadFilm(url) {
   if (cached?.status === 'resolved') return Promise.resolve(cached.data);
   if (cached?.status === 'pending') return cached.promise;
 
-  const requestPromise = fetch(`/api/swapi/films/${id}`).then((response) => {
+  const requestPromise = fetch(`/api/swapi/movies/${id}`).then((response) => {
     if (!response.ok) throw new Error('Failed to fetch film');
     return response.json();
   });

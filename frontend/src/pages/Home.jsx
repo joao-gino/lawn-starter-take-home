@@ -13,14 +13,18 @@ export default function Home() {
   const isSearchReady = query.trim().length >= 2;
   const isButtonDisabled = !isSearchReady || isLoading;
 
-  const extractId = (result) => {
-    if (result.uid) return result.uid;
-    if (result.url) {
-      const parts = result.url.split('/').filter(Boolean);
-      return parts[parts.length - 1];
+  const extractId = (item) => {
+    if (!item) return '';
+    if (item.uid) return item.uid;
+    if (item.url) {
+      const parts = item.url.split('/').filter(Boolean);
+      return parts[parts.length - 1] || '';
     }
     return '';
   };
+
+  const resultLabel = (item) => item?.name ?? item?.title ?? 'Unknown';
+  const resultPath = (id) => `/${category === 'people' ? 'people' : 'movies'}/${id}`;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -48,14 +52,8 @@ export default function Home() {
   };
 
   const renderResultState = () => {
-    if (isLoading) {
-      return <p className={styles.resultsMessage}>Searching...</p>;
-    }
-
-    if (error) {
-      return <p className={styles.resultsMessage}>{error}</p>;
-    }
-
+    if (isLoading) return <p className={styles.resultsMessage}>Searching...</p>;
+    if (error) return <p className={styles.resultsMessage}>{error}</p>;
     if (!hasSearched) {
       return (
         <p className={styles.resultsMessage}>
@@ -65,7 +63,6 @@ export default function Home() {
         </p>
       );
     }
-
     if (results.length === 0) {
       return (
         <p className={styles.resultsMessage}>
@@ -78,13 +75,16 @@ export default function Home() {
 
     return (
       <ul className={styles.resultsList}>
-        {results.map((result) => {
-          const id = extractId(result);
+        {results.map((item) => {
+          const id = extractId(item);
+          const label = resultLabel(item);
+          const linkTarget = id ? resultPath(id) : null;
+
           return (
-            <li key={id || result.name}>
-              <span>{result.name}</span>
-              {id ? (
-                <Link to={`/people/${id}`} className={styles.detailButton}>
+            <li key={`${category}-${id || label}`}>
+              <span>{label}</span>
+              {linkTarget ? (
+                <Link to={linkTarget} className={styles.detailButton}>
                   SEE DETAILS
                 </Link>
               ) : (

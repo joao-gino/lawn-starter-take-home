@@ -2,11 +2,15 @@ services:
   php:
     build: ./docker/php
     container_name: swapi-php
+    working_dir: /var/www/html
     volumes:
       - ./backend:/var/www/html
+      - ./backend/vendor:/var/www/html/vendor
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
+    command: >
+      sh -c "composer install --prefer-dist --no-interaction && php-fpm"
 
   nginx:
     build: ./docker/nginx
