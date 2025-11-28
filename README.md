@@ -51,8 +51,6 @@ SWStarter is a full-stack playground that wraps the public Star Wars API (SWAPI)
 └── README.md
 ```
 
-(See tree in prompt for full breakdown.)
-
 ## Getting Started with Docker
 
 ### Prerequisites
