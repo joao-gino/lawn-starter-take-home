@@ -13,6 +13,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "php artisan migrate:status >/dev/null 2>&1"]
       interval: 10s
@@ -63,6 +65,20 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: swapi-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   scheduler:
     extends: php
     command: ["php", "artisan", "schedule:work"]
@@ -79,3 +95,4 @@ services:
 
 volumes:
   mysql_data:
+  redis_data:

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Jobs\LogRequestEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\InputBag;
 
@@ -16,27 +18,41 @@ class SwapiController extends Controller
     {
         $startedAt = microtime(true);
 
-        $baseUrl = env('SWAPI_BASE_URL');
-        $resourcePath = $this->mountResourcePath($resource);
-        if ($identifier) {
-            $resourcePath .= '/' . $identifier;
-        }
-        $url = rtrim($baseUrl . '/' . $resourcePath, '/');
-
-        $queryParams = $request->query();
+        $resourcePath = $this->mountResourcePath($resource, $identifier);
+        $queryParams  = $request->query();
         if ($queryParams instanceof InputBag) {
             $queryParams = $queryParams->all();
         }
 
-        $response = Http::get($url, $queryParams);
+        $cacheKey = $this->buildCacheKey($resourcePath, $queryParams);
 
-        abort_unless($response->successful(), $response->status(), $response->json('detail', 'SWAPI error'));
+        $payload = Cache::remember(
+            $cacheKey,
+            now()->addHour(),
+            function () use ($resourcePath, $queryParams) {
+                $baseUrl = env('SWAPI_BASE_URL');
+                $url = rtrim("{$baseUrl}/{$resourcePath}", '/');
+
+                $response = Http::get($url, $queryParams);
+
+                abort_unless(
+                    $response->successful(),
+                    $response->status(),
+                    $response->json('detail', 'SWAPI error')
+                );
+
+                return $response->json();
+            }
+        );
 
         $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
 
-        LogRequestEvent::dispatch($this->endpoint . $resource, $durationMs);
+        LogRequestEvent::dispatch(
+            endpoint: "{$this->endpoint}{$resource}",
+            duration: $durationMs,
+        );
 
-        return response()->json($response->json(), $response->status());
+        return response()->json($payload);
     }
 
     private function mountResourcePath($resource, $identifier = null)
@@ -46,5 +62,12 @@ class SwapiController extends Controller
             'movies' => $identifier ? "films/$identifier" : 'films',
             default => throw new InvalidArgumentException("Invalid resource: $resource"),
         };
+    }
+
+    private function buildCacheKey(string $path, array $query = []): string
+    {
+        ksort($query);
+        $suffix = empty($query) ? '' : ':' . http_build_query($query);
+        return 'swapi:' . Str::slug($path, ':') . $suffix;
     }
 }
